@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "HeaderPilot",
+  "version": "1.0.0",
+  "description": "轻松驾驭每一个 HTTP 请求头与响应头：一键设置、追加或删除，支持按网址规则匹配，调试 API 与前端联调的得力助手。",
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "storage",
+    "activeTab",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "HeaderPilot"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

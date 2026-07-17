@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>HeaderPilot</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="title">
+        <span class="logo">⚡</span>
+        <span>HeaderPilot</span>
+      </div>
+      <label class="switch" title="总开关">
+        <input type="checkbox" id="masterSwitch" checked>
+        <span class="slider"></span>
+      </label>
+    </header>
+
+    <div id="errorBanner" class="error-banner" hidden></div>
+
+    <div id="ruleList" class="rule-list"></div>
+
+    <div class="toolbar">
+      <button id="addRuleBtn" class="btn primary">+ 添加规则</button>
+      <button id="exportBtn" class="btn ghost">导出</button>
+      <button id="importBtn" class="btn ghost">导入</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+    </div>
+  </div>
+
+  <template id="ruleTemplate">
+    <div class="rule-card">
+      <div class="rule-row">
+        <input type="checkbox" class="rule-enabled" checked>
+        <select class="rule-type">
+          <option value="request">请求头 Request</option>
+          <option value="response">响应头 Response</option>
+        </select>
+        <select class="rule-action">
+          <option value="set">设置 Set</option>
+          <option value="append">追加 Append</option>
+          <option value="remove">删除 Remove</option>
+        </select>
+        <button class="btn icon delete-btn" title="删除该规则">✕</button>
+      </div>
+      <div class="rule-row">
+        <input type="text" class="rule-name" placeholder="Header 名称，如 Authorization">
+      </div>
+      <div class="rule-row value-row">
+        <input type="text" class="rule-value" placeholder="Header 值">
+      </div>
+      <div class="rule-row">
+        <input type="text" class="rule-urlfilter" placeholder="URL 匹配（留空=所有网址），如 *://*.example.com/*">
+      </div>
+    </div>
+  </template>
+
+  <script src="popup.js"></script>
+</body>
+</html>
