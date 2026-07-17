@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HeaderPilot — 隐私政策 / Privacy Policy</title>
+<style>
+  :root{
+    --ink:#1f2430;
+    --paper:#f6f7fb;
+    --card:#ffffff;
+    --line:#e3e5ec;
+    --accent:#4361ee;
+    --accent-soft:#eceffb;
+    --muted:#6b7080;
+    --mono: "SF Mono","Cascadia Code","Consolas",monospace;
+    --sans: -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.7;
+  }
+  a{color:var(--accent);}
+
+  header.hero{
+    background:var(--ink);
+    color:#fff;
+    padding:56px 24px 64px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size:28px 28px;
+    pointer-events:none;
+  }
+  .hero-inner{max-width:760px;margin:0 auto;position:relative;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:.02em;color:#c7ceff;}
+  .brand svg{width:20px;height:20px;}
+  h1{
+    font-size:clamp(28px,4vw,40px);
+    margin:20px 0 8px;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{color:#a7acc4;font-size:15px;}
+  .lang-toggle{
+    display:inline-flex;
+    margin-top:24px;
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .lang-toggle button{
+    font-family:var(--sans);
+    background:transparent;
+    color:#c7ceff;
+    border:none;
+    padding:7px 16px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .lang-toggle button.active{background:var(--accent);color:#fff;}
+
+  main{max-width:760px;margin:-32px auto 0;padding:0 24px 80px;position:relative;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:36px 40px;
+    box-shadow:0 12px 32px rgba(31,36,48,.06);
+  }
+  .meta{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    color:var(--muted);
+    font-size:13px;
+    font-family:var(--mono);
+    margin-bottom:28px;
+    padding-bottom:20px;
+    border-bottom:1px dashed var(--line);
+  }
+  .meta code{background:var(--accent-soft);color:var(--accent);padding:2px 6px;border-radius:4px;}
+
+  section{margin-bottom:32px;}
+  section:last-child{margin-bottom:0;}
+  h2{
+    font-size:16px;
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:0 0 12px;
+  }
+  h2 .num{
+    font-family:var(--mono);
+    color:var(--accent);
+    font-size:13px;
+    font-weight:700;
+  }
+  p{margin:0 0 12px;color:#3a3f4d;}
+  ul{margin:0 0 12px;padding-left:20px;color:#3a3f4d;}
+  li{margin-bottom:6px;}
+
+  .perm-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+    margin-top:8px;
+  }
+  .perm-table th, .perm-table td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  .perm-table th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+  .perm-table code{font-family:var(--mono);background:var(--accent-soft);color:var(--accent);padding:2px 6px;border-radius:4px;font-size:12px;white-space:nowrap;}
+
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+  .badge{
+    display:flex;align-items:center;gap:6px;
+    font-size:12px;color:var(--accent);
+    background:var(--accent-soft);
+    padding:6px 10px;border-radius:20px;
+  }
+
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    padding:32px 24px 48px;
+  }
+
+  [data-lang="en"]{display:none;}
+  body.lang-en [data-lang="zh"]{display:none;}
+  body.lang-en [data-lang="en"]{display:block;}
+  body.lang-en h2 [data-lang="en"]{display:inline;}
+  body.lang-en li[data-lang="en"], body.lang-en td[data-lang="en"]{display:list-item;}
+  body.lang-en td[data-lang="en"]{display:table-cell;}
+
+  @media (max-width:640px){
+    .card{padding:28px 22px;}
+    header.hero{padding:44px 20px 56px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="6" fill="#4361EE"/>
+        <path d="M13.5 3L7.5 13.5H11.5L10 21L17 10.5H13L13.5 3Z" fill="white"/>
+      </svg>
+      HeaderPilot
+    </div>
+    <h1 data-lang="zh">隐私政策</h1>
+    <h1 data-lang="en" style="display:none;">Privacy Policy</h1>
+    <p class="subtitle" data-lang="zh">关于 HeaderPilot 浏览器扩展如何处理您的数据</p>
+    <p class="subtitle" data-lang="en" style="display:none;">How the HeaderPilot browser extension handles your data</p>
+
+    <div class="lang-toggle">
+      <button id="btn-zh" class="active" onclick="setLang('zh')">中文</button>
+      <button id="btn-en" onclick="setLang('en')">English</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <div class="meta">
+      <span data-lang="zh">生效日期：</span><span data-lang="en" style="display:none;">Effective date:</span>
+      <code>2026-07-13</code>
+    </div>
+
+    <section>
+      <h2><span class="num">01</span><span data-lang="zh">总览</span><span data-lang="en" style="display:none;">Overview</span></h2>
+      <p data-lang="zh">HeaderPilot（以下简称"本扩展"）是一款用于编辑 HTTP 请求头与响应头的浏览器扩展程序。我们非常重视您的隐私，本政策说明本扩展在您使用过程中如何处理数据——简单来说：<strong>我们不收集，也不上传任何数据。</strong></p>
+      <p data-lang="en" style="display:none;">HeaderPilot ("the extension") is a browser extension for editing HTTP request and response headers. We take privacy seriously, and this policy explains how data is handled while you use it — in short: <strong>we don't collect or upload any data.</strong></p>
+    </section>
+
+    <section>
+      <h2><span class="num">02</span><span data-lang="zh">我们不收集的内容</span><span data-lang="en" style="display:none;">What we don't collect</span></h2>
+      <ul data-lang="zh">
+        <li>不收集您的浏览历史、访问的网址或页面内容</li>
+        <li>不收集个人身份信息（姓名、邮箱、账号等）</li>
+        <li>不读取、拦截或上传请求/响应的正文内容</li>
+        <li>不使用任何第三方分析、统计或广告 SDK</li>
+      </ul>
+      <ul data-lang="en" style="display:none;">
+        <li>No browsing history, visited URLs, or page content</li>
+        <li>No personally identifiable information (name, email, account, etc.)</li>
+        <li>No reading, intercepting, or uploading of request/response bodies</li>
+        <li>No third-party analytics, telemetry, or advertising SDKs</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="num">03</span><span data-lang="zh">本地存储的数据</span><span data-lang="en" style="display:none;">Data stored locally</span></h2>
+      <p data-lang="zh">您在弹出窗口中创建的自定义 Header 规则（如 Header 名称、值、匹配的网址模式、启用状态）会通过浏览器提供的 <code style="font-family:var(--mono);background:var(--accent-soft);padding:2px 6px;border-radius:4px;">chrome.storage.local</code> 接口，仅保存在您本机浏览器的本地存储中。</p>
+      <p data-lang="zh">这些数据：</p>
+      <ul data-lang="zh">
+        <li>不会同步到任何 Anthropic、Google 或第三方服务器（除非您主动开启浏览器自带的 Chrome 账号同步功能）</li>
+        <li>仅在您卸载扩展或手动清除浏览器数据时被删除</li>
+        <li>可通过扩展内置的"导出"功能，由您自行导出为本地 JSON 文件</li>
+      </ul>
+      <p data-lang="en" style="display:none;">Custom header rules you create in the popup (header name, value, URL match pattern, enabled state) are stored only on your local machine via the browser's <code style="font-family:var(--mono);background:var(--accent-soft);padding:2px 6px;border-radius:4px;">chrome.storage.local</code> API.</p>
+      <p data-lang="en" style="display:none;">This data:</p>
+      <ul data-lang="en" style="display:none;">
+        <li>Is never sent to any Anthropic, Google, or third-party server (unless you enable Chrome's own account sync feature)</li>
+        <li>Is only removed when you uninstall the extension or manually clear browser data</li>
+        <li>Can be exported to a local JSON file at any time via the built-in "Export" feature</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="num">04</span><span data-lang="zh">为什么需要这些权限</span><span data-lang="en" style="display:none;">Why these permissions are needed</span></h2>
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th data-lang="zh">权限</th><th data-lang="en" style="display:none;">Permission</th>
+            <th data-lang="zh">用途</th><th data-lang="en" style="display:none;">Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>declarativeNetRequest</code></td>
+            <td data-lang="zh">按您设置的规则修改请求头/响应头，这是扩展的核心功能</td>
+            <td data-lang="en" style="display:none;">Modifies request/response headers based on your rules — this is the extension's core function</td>
+          </tr>
+          <tr>
+            <td><code>storage</code></td>
+            <td data-lang="zh">在本地保存您创建的规则，以便下次打开浏览器时依然生效</td>
+            <td data-lang="en" style="display:none;">Saves your rules locally so they persist across browser sessions</td>
+          </tr>
+          <tr>
+            <td><code>host_permissions<br>(&lt;all_urls&gt;)</code></td>
+            <td data-lang="zh">因为您可能需要对任意网站设置 Header 规则，扩展需要该权限才能在对应网址生效；扩展不会借此读取页面内容</td>
+            <td data-lang="en" style="display:none;">Needed so your header rules can apply to any site you choose to target; this permission is not used to read page content</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="badge-row">
+        <span class="badge">✓ <span data-lang="zh">无网络请求上传数据</span><span data-lang="en" style="display:none;">No outbound data uploads</span></span>
+        <span class="badge">✓ <span data-lang="zh">无第三方 SDK</span><span data-lang="en" style="display:none;">No third-party SDKs</span></span>
+        <span class="badge">✓ <span data-lang="zh">仅本地存储</span><span data-lang="en" style="display:none;">Local storage only</span></span>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="num">05</span><span data-lang="zh">数据的删除</span><span data-lang="en" style="display:none;">Deleting your data</span></h2>
+      <p data-lang="zh">由于所有数据都只存储在您本机，您可以随时通过以下方式清除：卸载扩展；或在扩展弹出窗口中逐条删除规则；或通过浏览器的"扩展程序数据"管理界面清除本地存储。</p>
+      <p data-lang="en" style="display:none;">Since all data lives only on your device, you can remove it at any time by: uninstalling the extension, deleting rules one by one in the popup, or clearing local storage via your browser's extension data management screen.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">06</span><span data-lang="zh">政策变更</span><span data-lang="en" style="display:none;">Changes to this policy</span></h2>
+      <p data-lang="zh">若本政策内容发生变更，我们会更新本页面顶部的生效日期。建议您在更新扩展版本后回到本页面查看最新内容。</p>
+      <p data-lang="en" style="display:none;">If this policy changes, we will update the effective date at the top of this page. Please revisit this page after updating the extension to review the latest version.</p>
+    </section>
+
+    <section>
+      <h2><span class="num">07</span><span data-lang="zh">联系方式</span><span data-lang="en" style="display:none;">Contact</span></h2>
+      <p data-lang="zh">如对本隐私政策有任何疑问，请通过 Chrome 应用商店的开发者联系方式与我们取得联系。</p>
+      <p data-lang="en" style="display:none;">If you have any questions about this privacy policy, please reach out via the developer contact listed on the Chrome Web Store listing.</p>
+    </section>
+  </div>
+</main>
+
+<footer data-lang="zh">HeaderPilot · 本页面可直接托管于 GitHub Pages 等静态站点服务</footer>
+<footer data-lang="en" style="display:none;">HeaderPilot · This page can be hosted as-is on GitHub Pages or any static hosting service</footer>
+
+<script>
+  function setLang(lang){
+    document.body.classList.toggle('lang-en', lang === 'en');
+    document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  }
+</script>
+
+</body>
+</html>
