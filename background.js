@@ -92,24 +92,55 @@ async function syncRulesToBrowser() {
   }
 }
 
+// 串行化队列：防止 storage.onChanged 与 popup 的 REQUEST_SYNC 消息
+// 几乎同时触发时并发执行 syncRulesToBrowser，导致两次调用读到同一份旧的
+// dynamic rules 快照、都尝试添加相同 id 的规则，从而报错
+// "Rule with id N does not have a unique ID"。
+let syncChain = Promise.resolve();
+function queueSync() {
+  syncChain = syncChain.then(() => syncRulesToBrowser()).catch((err) => {
+    console.error("同步队列出错:", err);
+  });
+  return syncChain;
+}
+
 chrome.runtime.onInstalled.addListener(() => {
-  syncRulesToBrowser();
+  queueSync();
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  syncRulesToBrowser();
+  queueSync();
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && (changes[STORAGE_KEY] || changes[MASTER_SWITCH_KEY])) {
-    syncRulesToBrowser();
+    queueSync();
   }
 });
 
 // popup 打开时也做一次兜底同步（service worker 可能刚被唤醒）
+// 同时处理来自 content script 的"请求体规则命中"上报，用于角标计数提示
+const bodyHitCountByTab = new Map();
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg && msg.type === "REQUEST_SYNC") {
-    syncRulesToBrowser().then(() => sendResponse({ ok: true }));
+    queueSync().then(() => sendResponse({ ok: true }));
     return true; // 异步响应
+  }
+  if (msg && msg.type === "BODY_RULE_HIT" && sender.tab?.id != null) {
+    const tabId = sender.tab.id;
+    const count = (bodyHitCountByTab.get(tabId) || 0) + 1;
+    bodyHitCountByTab.set(tabId, count);
+    chrome.action.setBadgeText({ tabId, text: String(count) });
+    chrome.action.setBadgeBackgroundColor({ tabId, color: "#4361ee" });
+  }
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => bodyHitCountByTab.delete(tabId));
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (changeInfo.status === "loading") {
+    bodyHitCountByTab.delete(tabId);
+    chrome.action.setBadgeText({ tabId, text: "" });
   }
 });

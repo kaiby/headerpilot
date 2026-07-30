@@ -160,3 +160,237 @@ importFile.addEventListener("change", async () => {
 });
 
 loadState();
+
+// ==================== Tab 切换 ====================
+
+const tabBtns = document.querySelectorAll(".tab-btn");
+const panels = {
+  header: document.getElementById("panel-header"),
+  body: document.getElementById("panel-body"),
+};
+
+tabBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    tabBtns.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    Object.values(panels).forEach((p) => p.classList.remove("active"));
+    panels[btn.dataset.tab].classList.add("active");
+  });
+});
+
+// ==================== 请求体规则管理 ====================
+
+const BODY_STORAGE_KEY = "bodyRules";
+
+const bEls = {
+  list: document.getElementById("bodyRuleList"),
+  addBtn: document.getElementById("addBodyRuleBtn"),
+  form: document.getElementById("bodyRuleForm"),
+  formTitle: document.getElementById("bodyFormTitle"),
+  saveBtn: document.getElementById("bf-save"),
+  cancelBtn: document.getElementById("bf-cancel"),
+  name: document.getElementById("bf-name"),
+  matchType: document.getElementById("bf-matchType"),
+  urlFilter: document.getElementById("bf-urlFilter"),
+  method: document.getElementById("bf-method"),
+  action: document.getElementById("bf-action"),
+  path: document.getElementById("bf-path"),
+  value: document.getElementById("bf-value"),
+  find: document.getElementById("bf-find"),
+  matchAsRegex: document.getElementById("bf-matchAsRegex"),
+  replaceWith: document.getElementById("bf-replaceWith"),
+  replaceValue: document.getElementById("bf-replaceValue"),
+  exportBtn: document.getElementById("bodyExportBtn"),
+  importBtn: document.getElementById("bodyImportBtn"),
+  importFile: document.getElementById("bodyImportFile"),
+};
+
+let bodyEditingId = null;
+
+function getBodyRules() {
+  return chrome.storage.local.get(BODY_STORAGE_KEY).then((d) => d[BODY_STORAGE_KEY] || []);
+}
+function setBodyRules(rules) {
+  return chrome.storage.local.set({ [BODY_STORAGE_KEY]: rules });
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+
+function bodyActionLabel(rule) {
+  if (rule.action === "jsonSet") return `JSON 赋值: ${rule.path} = ${rule.value}`;
+  if (rule.action === "findReplace") return `查找替换: "${rule.find}" → "${rule.replaceWith}"`;
+  if (rule.action === "replace") return "完整替换请求体";
+  return rule.action;
+}
+
+async function renderBodyList() {
+  const rules = await getBodyRules();
+  bEls.list.innerHTML = "";
+  if (rules.length === 0) {
+    bEls.list.innerHTML = '<div class="empty-hint">还没有请求体规则，点击下方"添加请求体规则"开始</div>';
+    return;
+  }
+  for (const rule of rules) {
+    const card = document.createElement("div");
+    card.className = "rule-card" + (rule.enabled ? "" : " disabled");
+    card.innerHTML = `
+      <div class="rule-row">
+        <input type="checkbox" data-toggle="${rule.id}" ${rule.enabled ? "checked" : ""}>
+        <span style="font-weight:600;flex:1;">${escapeHtml(rule.name || "(未命名)")}</span>
+        <button class="btn icon" data-delete="${rule.id}" title="删除">✕</button>
+      </div>
+      <div class="rule-row" style="font-size:11px;color:#666;">[${rule.method}] ${escapeHtml(rule.urlFilter || "(任意 URL)")}</div>
+      <div class="rule-row" style="font-size:11px;color:#666;">${escapeHtml(bodyActionLabel(rule))}</div>
+      <div class="rule-row">
+        <button class="btn ghost" data-edit="${rule.id}" style="flex:1;">编辑</button>
+      </div>
+    `;
+    bEls.list.appendChild(card);
+  }
+}
+
+function showBodyForm(rule) {
+  bodyEditingId = rule ? rule.id : null;
+  bEls.formTitle.textContent = rule ? "编辑请求体规则" : "新建请求体规则";
+  bEls.name.value = rule?.name || "";
+  bEls.matchType.value = rule?.matchType || "contains";
+  bEls.urlFilter.value = rule?.urlFilter || "";
+  bEls.method.value = rule?.method || "ANY";
+  bEls.action.value = rule?.action || "jsonSet";
+  bEls.path.value = rule?.path || "";
+  bEls.value.value = rule?.value ?? "";
+  bEls.find.value = rule?.find || "";
+  bEls.matchAsRegex.checked = !!rule?.matchAsRegex;
+  bEls.replaceWith.value = rule?.replaceWith || "";
+  bEls.replaceValue.value = rule?.action === "replace" ? (rule?.value ?? "") : "";
+  updateBodyActionFieldsVisibility();
+  bEls.form.classList.remove("hidden");
+}
+
+function hideBodyForm() {
+  bEls.form.classList.add("hidden");
+  bodyEditingId = null;
+}
+
+function updateBodyActionFieldsVisibility() {
+  const a = bEls.action.value;
+  document.getElementById("bf-fields-jsonSet").classList.toggle("hidden", a !== "jsonSet");
+  document.getElementById("bf-fields-findReplace").classList.toggle("hidden", a !== "findReplace");
+  document.getElementById("bf-fields-replace").classList.toggle("hidden", a !== "replace");
+}
+
+bEls.action.addEventListener("change", updateBodyActionFieldsVisibility);
+bEls.addBtn.addEventListener("click", () => showBodyForm(null));
+bEls.cancelBtn.addEventListener("click", hideBodyForm);
+
+bEls.saveBtn.addEventListener("click", async () => {
+  const action = bEls.action.value;
+  const rule = {
+    id: bodyEditingId || uid(),
+    enabled: true,
+    name: bEls.name.value.trim(),
+    matchType: bEls.matchType.value,
+    urlFilter: bEls.urlFilter.value.trim(),
+    method: bEls.method.value,
+    action,
+  };
+  if (action === "jsonSet") {
+    rule.path = bEls.path.value.trim();
+    rule.value = bEls.value.value;
+  } else if (action === "findReplace") {
+    rule.find = bEls.find.value;
+    rule.matchAsRegex = bEls.matchAsRegex.checked;
+    rule.replaceWith = bEls.replaceWith.value;
+  } else if (action === "replace") {
+    rule.value = bEls.replaceValue.value;
+  }
+  if (!rule.name) rule.name = rule.urlFilter || "(未命名规则)";
+
+  const rules = await getBodyRules();
+  const existing = rules.find((r) => r.id === rule.id);
+  if (existing) {
+    rule.enabled = existing.enabled;
+    Object.assign(existing, rule);
+  } else {
+    rules.push(rule);
+  }
+  await setBodyRules(rules);
+  hideBodyForm();
+  renderBodyList();
+});
+
+bEls.list.addEventListener("click", async (e) => {
+  const editId = e.target.getAttribute("data-edit");
+  const deleteId = e.target.getAttribute("data-delete");
+  if (editId) {
+    const rules = await getBodyRules();
+    const rule = rules.find((r) => r.id === editId);
+    if (rule) showBodyForm(rule);
+  } else if (deleteId) {
+    if (!confirm("确定删除这条请求体规则吗？")) return;
+    const rules = await getBodyRules();
+    await setBodyRules(rules.filter((r) => r.id !== deleteId));
+    renderBodyList();
+  }
+});
+
+bEls.list.addEventListener("change", async (e) => {
+  const toggleId = e.target.getAttribute("data-toggle");
+  if (toggleId) {
+    const rules = await getBodyRules();
+    const rule = rules.find((r) => r.id === toggleId);
+    if (rule) {
+      rule.enabled = e.target.checked;
+      await setBodyRules(rules);
+    }
+  }
+});
+
+bEls.exportBtn.addEventListener("click", async () => {
+  const rules = await getBodyRules();
+  const blob = new Blob([JSON.stringify(rules, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  chrome.downloads
+    ? chrome.downloads.download({ url, filename: "headerpilot-body-rules.json" })
+    : (() => {
+        const a = document.createElement("a");
+        a.href = url; a.download = "headerpilot-body-rules.json"; a.click();
+      })();
+});
+
+bEls.importBtn.addEventListener("click", () => bEls.importFile.click());
+bEls.importFile.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const imported = JSON.parse(text);
+    if (!Array.isArray(imported)) throw new Error("格式不正确，应为规则数组");
+    const rules = imported.map((r) => ({
+      id: uid(),
+      enabled: r.enabled !== false,
+      name: r.name || "",
+      matchType: ["contains", "wildcard", "regex"].includes(r.matchType) ? r.matchType : "contains",
+      urlFilter: r.urlFilter || "",
+      method: r.method || "ANY",
+      action: ["jsonSet", "findReplace", "replace"].includes(r.action) ? r.action : "jsonSet",
+      path: r.path || "",
+      value: r.value ?? "",
+      find: r.find || "",
+      matchAsRegex: !!r.matchAsRegex,
+      replaceWith: r.replaceWith || "",
+    }));
+    await setBodyRules(rules);
+    renderBodyList();
+  } catch (err) {
+    alert("导入失败：" + err.message);
+  } finally {
+    e.target.value = "";
+  }
+});
+
+renderBodyList();

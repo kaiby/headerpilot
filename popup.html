@@ -20,13 +20,94 @@
 
     <div id="errorBanner" class="error-banner" hidden></div>
 
-    <div id="ruleList" class="rule-list"></div>
+    <div class="tabbar">
+      <button class="tab-btn active" data-tab="header">请求头 / 响应头</button>
+      <button class="tab-btn" data-tab="body">请求体</button>
+    </div>
 
-    <div class="toolbar">
-      <button id="addRuleBtn" class="btn primary">+ 添加规则</button>
-      <button id="exportBtn" class="btn ghost">导出</button>
-      <button id="importBtn" class="btn ghost">导入</button>
-      <input type="file" id="importFile" accept="application/json" hidden>
+    <div id="panel-header" class="tab-panel active">
+      <div id="ruleList" class="rule-list"></div>
+
+      <div class="toolbar">
+        <button id="addRuleBtn" class="btn primary">+ 添加规则</button>
+        <button id="exportBtn" class="btn ghost">导出</button>
+        <button id="importBtn" class="btn ghost">导入</button>
+        <input type="file" id="importFile" accept="application/json" hidden>
+      </div>
+    </div>
+
+    <div id="panel-body" class="tab-panel">
+      <p class="body-hint">
+        通过重写页面的 fetch / XHR 修改请求体，仅对"页面脚本自己发起"的请求生效
+        （SPA 的 API 调用等），无法修改地址栏跳转、原生 form 提交等。
+      </p>
+
+      <div id="bodyRuleList" class="rule-list"></div>
+
+      <div id="bodyRuleForm" class="body-form hidden">
+        <h3 id="bodyFormTitle">新建请求体规则</h3>
+        <label>规则名称</label>
+        <input type="text" id="bf-name" placeholder="例如：修改登录接口的 userId">
+
+        <label>URL 匹配方式</label>
+        <select id="bf-matchType">
+          <option value="contains">包含子串</option>
+          <option value="wildcard">通配符 (*)</option>
+          <option value="regex">正则表达式</option>
+        </select>
+
+        <label>URL 匹配规则</label>
+        <input type="text" id="bf-urlFilter" placeholder="例如：/api/login 或 https://example.com/api/*">
+
+        <label>请求方法</label>
+        <select id="bf-method">
+          <option value="ANY">任意</option>
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="PATCH">PATCH</option>
+          <option value="DELETE">DELETE</option>
+        </select>
+
+        <label>操作类型</label>
+        <select id="bf-action">
+          <option value="jsonSet">JSON 字段赋值（点路径）</option>
+          <option value="findReplace">查找替换（文本/正则）</option>
+          <option value="replace">完整替换请求体</option>
+        </select>
+
+        <div id="bf-fields-jsonSet" class="body-action-fields">
+          <label>字段路径（如 user.id，或 FormData 的字段名）</label>
+          <input type="text" id="bf-path" placeholder="user.id">
+          <label>新值（可写 JSON 字面量，如 123、true、"abc"，或直接写字符串）</label>
+          <input type="text" id="bf-value" placeholder="123">
+        </div>
+
+        <div id="bf-fields-findReplace" class="body-action-fields hidden">
+          <label>查找内容</label>
+          <input type="text" id="bf-find" placeholder="要查找的文本或正则表达式">
+          <label class="checkbox-label"><input type="checkbox" id="bf-matchAsRegex"> 作为正则表达式匹配</label>
+          <label>替换为</label>
+          <input type="text" id="bf-replaceWith" placeholder="替换后的内容">
+        </div>
+
+        <div id="bf-fields-replace" class="body-action-fields hidden">
+          <label>新的请求体内容（完整覆盖）</label>
+          <textarea id="bf-replaceValue" rows="3" placeholder='例如：{"foo":"bar"}'></textarea>
+        </div>
+
+        <div class="body-form-actions">
+          <button id="bf-save" class="btn primary">保存</button>
+          <button id="bf-cancel" class="btn ghost">取消</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button id="addBodyRuleBtn" class="btn primary">+ 添加请求体规则</button>
+        <button id="bodyExportBtn" class="btn ghost">导出</button>
+        <button id="bodyImportBtn" class="btn ghost">导入</button>
+        <input type="file" id="bodyImportFile" accept="application/json" hidden>
+      </div>
     </div>
   </div>
 
